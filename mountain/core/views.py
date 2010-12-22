@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.utils import simplejson
+from django.views.decorators.csrf import csrf_exempt
 
 from landscape.lib.bpickle import loads
 
@@ -7,11 +8,13 @@ from mountain.core.models import Computer, Message
 from mountain.core.utils import render_messages, MessageType, hash_types
 from mountain.core.signals import message_available
 
+@csrf_exempt
 def ping(request):
     id = request.POST.get('insecure_id')
     msg_count = Message.objects.filter(computer__insecure_id=id).count()
     return render_messages(bool(msg_count), append_uuid=False)
 
+@csrf_exempt
 def message_system(request):
     try:
         secure_id = request.META.get('HTTP_X_COMPUTER_ID')

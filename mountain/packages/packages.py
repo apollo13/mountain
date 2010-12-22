@@ -17,13 +17,8 @@ def handle_add_packages(sender, computer, request_data, msg_data, **kwargs):
         for i in ('name', 'summary', 'version', 'description',
             'installed-size', 'size', 'type', 'section'):
             setattr(m, i.replace('-', '_'), p.get(i))
-        # TODO: that's ugly
-        try:
-            m.save()
-            ids.append(m.id)
-        except Exception, e:
-            print p
-            print e
+        m.save()
+        ids.append(m.id)
 
     return [{'type': 'package-ids', 'ids':ids, 'request-id':msg_data['request-id']}]
 

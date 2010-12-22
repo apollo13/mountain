@@ -5,7 +5,7 @@ from mountain.core.models import Computer
 class PackageHashManager(models.Manager):
     def hashes_in_bulk(self, id_list):
         qs = self.model.objects.filter(hash__in=id_list)
-        return dict([(obj.hash, obj) for obj in qs.iterator()])
+        return dict((obj.hash, obj) for obj in qs.iterator())
 
 class PackageHash(models.Model):
     hash = models.CharField(max_length=40, db_index=True, unique=True)
