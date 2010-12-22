@@ -41,8 +41,9 @@ def register_messagetype(type):
 
     def install_type(sender, app, created_models, verbosity=0, **kwargs):
         if verbosity>=1:
-            print "Installing message type %s" % type
-            AcceptedTypes.objects.get_or_create(identifier=type)
+            obj, created = AcceptedTypes.objects.get_or_create(identifier=type)
+            if created:
+                print "Installed message type %s" % type
 
     post_syncdb.connect(install_type, sender=models, weak=False)
 

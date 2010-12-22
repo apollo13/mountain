@@ -4,7 +4,9 @@ from mountain.monitor.models import ComputerInfo
 
 def handle_computer_info(sender, computer, request_data, msg_data, **kwargs):
     comp_info, created = ComputerInfo.objects.get_or_create(computer=computer)
-    comp_info.hostname = msg_data['hostname']
+    for i in ['total-memory', 'total-swap', 'hostname']:
+        setattr(comp_info, i.replace('-','_'), msg_data[i])
+    computer.hostname = msg_data['hostname']
     comp_info.save()
     return []
 

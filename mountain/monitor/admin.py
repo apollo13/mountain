@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from mountain.monitor.models import ProcessorInfo, HardwarePart, ComputerInfo
+from mountain.monitor.models import ComputerInfo#, ProcessorInfo, HardwarePart
 
 class ProcessorInfoAdmin(admin.ModelAdmin):
     list_display = ('model', 'vendor', 'processor_id', 'cache_size', 'computer')

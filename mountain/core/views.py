@@ -47,7 +47,7 @@ def message_system(request):
                 computer.next_server_sequence = data['next-expected-sequence']
                 computer.save()
         except Computer.DoesNotExist:
-            return render_messages({'type':'unkown-id'})
+            return render_messages([{'type':'unkown-id'}])
 
     # Special case registration, as we could get a request with nothing,
     # and without accepting register, we'll never get a registration.
