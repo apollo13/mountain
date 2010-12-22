@@ -3,7 +3,7 @@
 import os
 PATH = os.path.dirname(os.path.abspath(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -115,16 +115,12 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'taggit',
     'mountain.core',
     'mountain.monitor',
     'mountain.packages',
 )
 
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -134,19 +130,18 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler'
         },
         'console': {
-            'level': 'ERROR',
             'class': 'logging.StreamHandler'
         }
     },
     'loggers': {
-        'django.request':{
-            'handlers': ['mail_admins'],
+        'django.request': {
+            'handlers': ['mail_admins', 'console'],
             'level': 'ERROR',
             'propagate': True,
         },
-        'django':{
+        'mountain.messaging': {
             'handlers': ['console'],
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'propagate': True,
         },
     }

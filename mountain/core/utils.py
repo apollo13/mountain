@@ -7,15 +7,18 @@ from django.http import HttpResponse
 from mountain.core.settings import SERVER_UUID
 from mountain.core.models import AcceptedTypes
 
-def render_messages(messages, computer=None, append_uuid=True):
+def render_messages(messages, computer=None, ping_answer=False):
     """Updates the answer with the server-uuid, pickles it and returns the
     HttpReponse.
     """
     ret = {'messages': messages}
-    if append_uuid:
+    if not ping_answer:
         ret.update({'server-uuid': SERVER_UUID})
-    if computer:
-        ret.update({'client-accepted-types-hash': computer.client_accepted_types_hash.decode('hex')})
+        if computer:
+            ret.update({
+                'client-accepted-types-hash': computer.client_accepted_types_hash.decode('hex'),
+                'next-expected-sequence': computer.next_client_sequence
+            })
     return HttpResponse(dumps(ret))
 
 def MessageType(type, __instance_cache={}):

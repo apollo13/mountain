@@ -12,11 +12,11 @@ def force_resync(modeladmin, request, queryset):
     messages.info(request, 'Queued resyncronisation for the selected computers.')
 
 def confirm_computer(modeladmin, request, queryset):
-    queryset.update(confirmed=True)
     for comp in queryset:
         plugins = comp.company.activated_plugins.values_list('identifier', flat=True).order_by('identifier')
         Message.objects.create(computer=comp, message=dumps({
             'type': 'registration-done'}))
+    queryset.update(confirmed=True)
     messages.info(request, 'Queued confirmation for the selected computers.')
 
 def set_intervals(modelsamdin, request, queryset):
@@ -30,7 +30,7 @@ def set_intervals(modelsamdin, request, queryset):
 
 class ComputerAdmin(admin.ModelAdmin):
     actions = [force_resync, confirm_computer, set_intervals]
-    exclude = ('client_accepted_types', 'client_accepted_types_hash')
+    exclude = ('client_accepted_types_hash',)
     readonly_fields = ('confirmed',)
 
 class CompanyAdmin(admin.ModelAdmin):
