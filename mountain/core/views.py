@@ -17,11 +17,13 @@ from mountain.core.signals import message_available
 
 message_logger = logging.getLogger('mountain.messaging')
 
+
 @csrf_exempt
 def ping(request):
     id = request.POST.get('insecure_id')
     msg_count = Message.objects.filter(computer__insecure_id=id).count()
     return render_messages(bool(msg_count), ping_answer=True)
+
 
 @csrf_exempt
 @transaction.commit_on_success
@@ -42,7 +44,8 @@ def message_system(request):
             computer = Computer.objects.select_related('company')\
                                        .get(secure_id=secure_id)
             company = computer.company
-            if not all((computer.next_client_sequence, computer.next_server_sequence)):
+            if not all((computer.next_client_sequence,
+                        computer.next_server_sequence)):
                 computer.next_client_sequence = data['sequence']
                 computer.next_server_sequence = data['next-expected-sequence']
                 computer.save()
@@ -52,12 +55,12 @@ def message_system(request):
     # Special case registration, as we could get a request with nothing,
     # and without accepting register, we'll never get a registration.
     if computer is not None and computer.confirmed:
-        accepted_types = company.activated_plugins.values_list('identifier', flat=True).order_by('identifier')
+        accepted_types = company.activated_plugins.values_list('identifier',
+            flat=True).order_by('identifier')
         accepted_types_hash = company.activated_plugins_hash.decode('hex')
     else:
         accepted_types = ['register']
         accepted_types_hash = hash_types(['register'])
-
 
     # Check if sequence numbers match
     if computer is not None and computer.confirmed and \
@@ -67,7 +70,8 @@ def message_system(request):
 
     # Determine whether we need to notify the client about new/delete types
     if data.get('accepted-types') != accepted_types_hash:
-        return_msgs.append({'type':'accepted-types', 'types':list(accepted_types)})
+        return_msgs.append({'type': 'accepted-types',
+                            'types': list(accepted_types)})
 
     for msg in received_msgs:
         if computer is None and msg['type'] != 'register':
@@ -95,7 +99,6 @@ def message_system(request):
             next_client_sequence = \
                 F('next_client_sequence') + data['total-messages'],
             next_server_sequence = \
-                F('next_server_sequence') + len(return_msgs)
-        )
+                F('next_server_sequence') + len(return_msgs))
 
     return render_messages(return_msgs, computer=computer)

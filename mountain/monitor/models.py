@@ -1,7 +1,7 @@
 from django.db import models
 
 from mountain.core.models import Computer
-
+#
 #class ProcessorInfo(models.Model):
 #    computer = models.ForeignKey(Computer)
 #    processor_id = models.SmallIntegerField()
@@ -23,6 +23,7 @@ from mountain.core.models import Computer
 #
 #    def __unicode__(self):
 #        return self.product
+
 
 class ComputerInfo(models.Model):
     computer = models.ForeignKey(Computer)

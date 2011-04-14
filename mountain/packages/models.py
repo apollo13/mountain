@@ -22,6 +22,7 @@ STATUS_CHOICES = (
     (3, 'locked'),
 )
 
+
 class PackageManager(models.Manager):
     def hashes_in_bulk(self, id_list):
         qs = self.model.objects.filter(hash__in=id_list)

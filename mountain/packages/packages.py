@@ -1,13 +1,17 @@
 from mountain.core.signals import message_available
 from mountain.core.utils import MessageType
-from mountain.packages.models import Package, PackageRelation, PackageStatus, STATUS_CHOICES
+from mountain.packages.models import Package, PackageRelation, PackageStatus,\
+    STATUS_CHOICES
 from mountain.packages.utils import get_hash
+
 
 def handle_unknown_hashes(sender, computer, request_data, msg_data, **kwargs):
     hashes = [i.encode('hex') for i in msg_data['hashes']]
     data = Package.objects.hashes_in_bulk(hashes)
     ids = [(data.get(hash).id if data.get(hash) else None) for hash in hashes]
-    return [{'type': 'package-ids', 'ids':ids, 'request-id':msg_data['request-id']}]
+    return [{'type': 'package-ids', 'ids': ids,
+             'request-id': msg_data['request-id']}]
+
 
 def handle_add_packages(sender, computer, request_data, msg_data, **kwargs):
     ids = []
@@ -23,9 +27,12 @@ def handle_add_packages(sender, computer, request_data, msg_data, **kwargs):
                                            target=relation[1])
         ids.append(m.id)
 
-    return [{'type': 'package-ids', 'ids':ids, 'request-id':msg_data['request-id']}]
+    return [{'type': 'package-ids', 'ids': ids,
+             'request-id':msg_data['request-id']}]
+
 
 STATUS_TO_ID = dict(map(lambda x: x[::-1], STATUS_CHOICES))
+
 
 def handle_packages(sender, computer, request_data, msg_data, **kwargs):
     for status in ('installed', 'available', 'available-upgrades', 'locked'):
@@ -37,7 +44,7 @@ def handle_packages(sender, computer, request_data, msg_data, **kwargs):
             for id_or_range in msg_data.get(s, []):
                 ids_ = ids if not remove else remove_ids
                 if isinstance(id_or_range, tuple):
-                    ids_.extend(range(id_or_range[0], id_or_range[1]+1))
+                    ids_.extend(range(id_or_range[0], id_or_range[1] + 1))
                 else:
                     ids_.append(id_or_range)
 
@@ -50,6 +57,8 @@ def handle_packages(sender, computer, request_data, msg_data, **kwargs):
 
     return []
 
-message_available.connect(handle_unknown_hashes, sender=MessageType('unknown-package-hashes'))
-message_available.connect(handle_add_packages, sender=MessageType('add-packages'))
+message_available.connect(handle_unknown_hashes,
+    sender=MessageType('unknown-package-hashes'))
+message_available.connect(handle_add_packages,
+    sender=MessageType('add-packages'))
 message_available.connect(handle_packages, sender=MessageType('packages'))
